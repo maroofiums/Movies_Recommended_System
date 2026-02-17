@@ -1,4 +1,4 @@
-# 🎬 Movie Recommender System
+# Movie Recommender System
 
 A hybrid movie recommender system built with **Python**, **Streamlit**, and **TMDB API**.  
 It combines **content-based filtering** (movie overview, genres, tagline) with **popularity** and **vote average** to provide smarter movie recommendations.  
@@ -7,17 +7,17 @@ Posters and backdrops are fetched dynamically from **TMDB**.
 
 ---
 
-## 🚀 Features
+## Features
 
-- **Hybrid Recommendations:** Content similarity + popularity + vote average.  
-- **TMDB Posters:** Displays movie posters and backdrops dynamically.  
-- **Dropdown Select:** Search movies via a dropdown for better UX.  
-- **Side-by-Side Posters:** Recommendations displayed in columns.  
-- **Fully Cache Optimized:** Uses `st.cache_data` to speed up repeated operations.  
+- Hybrid Recommendations: Content similarity + popularity + vote average  
+- TMDB Posters: Displays movie posters and backdrops dynamically  
+- Dropdown Select: Search movies via a dropdown for better UX  
+- Side-by-Side Posters: Recommendations displayed in columns  
+- Fully Cache Optimized: Uses `st.cache_data` to speed up repeated operations  
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - Python 3.10+  
 - Streamlit  
@@ -28,22 +28,38 @@ Posters and backdrops are fetched dynamically from **TMDB**.
 
 ---
 
-## 📂 Files
+## Project Structure
 
-- `main.py` - Streamlit app  
-- `df.pkl` - Preprocessed movie dataframe  
-- `tfidf_matrix.pkl` - TF-IDF matrix of movie tags  
-- `indices.pkl` - Mapping of movie titles to dataframe indices  
-- `.env` - TMDB API key (not committed to GitHub)  
+```
+
+Movies_Recommended_System/
+├── Data/
+│   └── movies_metadata.csv        # Original raw dataset
+├── NoteBook/
+│   └── movies-recommender-sytem.ipynb   # Data exploration & preprocessing notebook
+├── app/
+│   ├── df.pkl                     # Preprocessed dataframe for recommender
+│   ├── indices.pkl                # Movie title to index mapping
+│   ├── main.py                    # Streamlit app
+│   ├── tfidf.pkl                  # TF-IDF vectorizer
+│   └── tfidf_matrix.pkl           # TF-IDF matrix of movie tags
+├── screenshots/
+│   ├── banner.png                 # Example backdrop/banner
+│   └── recommendations.jpeg       # Example recommendation layout
+├── .gitignore                     # To ignore environment & sensitive files
+├── README.md                       # Project documentation
+└── requirements.txt                # Python dependencies
+
+````
 
 ---
 
-## ⚡ Installation
+## Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/maroofiums/Movies_Recommended_System
+git clone https://github.com/maroofiums/Movies_Recommended_System.git
 cd Movies_Recommended_System
 ````
 
@@ -62,12 +78,12 @@ TMDB_API_KEY=your_tmdb_api_key_here
 4. Run the app:
 
 ```bash
-streamlit run main.py
+streamlit run app/main.py
 ```
 
 ---
 
-## 🧩 How It Works
+## How It Works
 
 1. **Data Preparation:**
 
@@ -88,6 +104,14 @@ streamlit run main.py
 
 ---
 
+## Links
+
+* Notebook: [Kaggle Notebook](https://www.kaggle.com/code/maroofiums/movies-recommender-sytem/notebook?scriptVersionId=291821274)
+* Live App: [Streamlit Deployment](https://movies-recommendr-system.streamlit.app/)
+* GitHub Repo: [Movies Recommended System](https://github.com/maroofiums/Movies_Recommended_System)
+
+---
+
 ## 📸 Screenshots
 
 ![Movie Banner](screenshots/banner.png)
@@ -95,10 +119,11 @@ streamlit run main.py
 
 ---
 
-## ⚠️ Notes
+## Notes
 
 * Make sure your **TMDB API key** is valid.
 * Posters/backdrops depend on TMDB availability.
 * Large dataset (~45k movies) may require caching for speed.
+* `.gitignore` excludes sensitive files like `.env` and large pickles.
 
 ---
