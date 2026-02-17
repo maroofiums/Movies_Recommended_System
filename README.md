@@ -107,7 +107,7 @@ streamlit run app/main.py
 ## Links
 
 * Notebook: [Kaggle Notebook](https://www.kaggle.com/code/maroofiums/movies-recommender-sytem/notebook?scriptVersionId=291821274)
-* Live App: [Streamlit Deployment](https://movies-recommendr-system.streamlit.app/)
+* Live App: [Streamlit Deployment](https://moviesrecommendedsystem.streamlit.app/)
 * GitHub Repo: [Movies Recommended System](https://github.com/maroofiums/Movies_Recommended_System)
 
 ---
