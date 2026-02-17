@@ -19,9 +19,18 @@ st.set_page_config(page_title="Movie Recommender", layout="wide")
 # =====================================
 @st.cache_data
 def load_data():
-    df = pd.read_pickle("df.pkl")
-    tfidf_matrix = pickle.load(open("tfidf_matrix.pkl", "rb"))
-    indices = pickle.load(open("indices.pkl", "rb"))
+    base_dir = os.path.dirname(__file__)
+    
+    # Load pickles
+    df_path = os.path.join(base_dir, "df.pkl")
+    tfidf_path = os.path.join(base_dir, "tfidf_matrix.pkl")
+    indices_path = os.path.join(base_dir, "indices.pkl")
+
+    df = pd.read_pickle(df_path)
+    with open(tfidf_path, "rb") as f:
+        tfidf_matrix = pickle.load(f)
+    with open(indices_path, "rb") as f:
+        indices = pickle.load(f)
 
     # Ensure numeric columns
     df["popularity"] = pd.to_numeric(df["popularity"], errors="coerce").fillna(0)
@@ -36,37 +45,35 @@ def load_data():
 
     return df, tfidf_matrix, indices
 
-
 df, tfidf_matrix, indices = load_data()
 
 # =====================================
 # TMDB CONFIG
 # =====================================
-TMDB_API_KEY = os.getenv("TMDB_API_KEY") # Replace with your TMDB API key
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
+PLACEHOLDER_IMAGE = os.path.join(os.path.dirname(__file__), "../screenshots/notfound.png")
 
 @st.cache_data
 def get_movie_data(title):
+    if not TMDB_API_KEY:
+        return PLACEHOLDER_IMAGE, None
     try:
         url = f"https://api.themoviedb.org/3/search/movie?api_key={TMDB_API_KEY}&query={title}"
         response = requests.get(url)
-
         if response.status_code != 200:
-            return None, None
-
+            return PLACEHOLDER_IMAGE, None
         data = response.json()
         if data.get("results"):
             movie = data["results"][0]
             poster = movie.get("poster_path")
             backdrop = movie.get("backdrop_path")
-            poster_url = TMDB_IMAGE_URL + poster if poster else None
+            poster_url = TMDB_IMAGE_URL + poster if poster else PLACEHOLDER_IMAGE
             backdrop_url = TMDB_IMAGE_URL + backdrop if backdrop else None
             return poster_url, backdrop_url
-
     except Exception as e:
         print("TMDB API Error:", e)
-
-    return None, None
+    return PLACEHOLDER_IMAGE, None
 
 # =====================================
 # RECOMMENDATION FUNCTION
@@ -78,7 +85,7 @@ def recommend(title, n=10):
     idx = indices[title]
 
     # Content similarity
-    sim_score = cosine_similarity(tfidf_matrix[idx], tfidf_matrix).flatten()
+    sim_score = cosine_similarity(tfidf_matrix[idx:idx+1], tfidf_matrix).flatten()
 
     # Hybrid score (content + popularity + vote_average)
     hybrid_score = (
@@ -99,7 +106,7 @@ if "selected_movie" not in st.session_state:
     st.session_state.selected_movie = df["title"].iloc[0]
 
 # =====================================
-# UI - Dropdown for better UX
+# UI - Dropdown
 # =====================================
 st.title("🎬 Movie Recommender System")
 
@@ -108,7 +115,6 @@ selected_movie = st.selectbox(
     df["title"].sort_values(),
     index=int(df[df["title"] == st.session_state.selected_movie].index[0])
 )
-
 
 st.session_state.selected_movie = selected_movie
 
@@ -133,10 +139,9 @@ cols = st.columns(5)
 for i, row in enumerate(recommendations.itertuples()):
     with cols[i % 5]:
         poster_url, _ = get_movie_data(row.title)
+        poster_url = poster_url or PLACEHOLDER_IMAGE
 
-        if poster_url:
-            if st.button(row.title, key=row.title):
-                st.session_state.selected_movie = row.title
-                st.rerun()
+        if st.button(row.title, key=row.title):
+            st.session_state.selected_movie = row.title
 
-            st.image(poster_url, use_container_width=True)
+        st.image(poster_url, use_container_width=True)
